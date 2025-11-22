@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo
+    container_name: mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: devops_backend
+    ports:
+      - "5050:5050"
+    environment:
+      - PORT=5050
+      - MONGO_URI=mongodb://mongo:27017/devops_dashboard
+      - JWT_SECRET=supersecretkey123
+      - JENKINS_URL=http://host.docker.internal:8080
+      - JENKINS_USER=ketan
+      - JENKINS_TOKEN=11e030936689314bda9cc3d6dd1224a0c6
+    depends_on:
+      - mongo
+
+  frontend:
+    build: ./frontend
+    container_name: devops_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
