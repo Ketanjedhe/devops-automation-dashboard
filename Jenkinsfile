@@ -18,38 +18,38 @@ pipeline {
         stage('Login to DockerHub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh "docker login -u ${USER} -p ${PASS}"
+                    bat "docker login -u %USER% -p %PASS%"
                 }
             }
         }
 
         stage('Build Backend Image') {
             steps {
-                sh """
+                bat '''
                 cd backend
-                docker build -t ${BACKEND_IMAGE}:latest .
-                """
+                docker build -t %DOCKERHUB_USER%/devops-automation-backend:latest .
+                '''
             }
         }
 
         stage('Build Frontend Image') {
             steps {
-                sh """
+                bat '''
                 cd frontend
-                docker build -t ${FRONTEND_IMAGE}:latest .
-                """
+                docker build -t %DOCKERHUB_USER%/devops-automation-frontend:latest .
+                '''
             }
         }
 
         stage('Push Backend Image') {
             steps {
-                sh "docker push ${BACKEND_IMAGE}:latest"
+                bat "docker push %DOCKERHUB_USER%/devops-automation-backend:latest"
             }
         }
 
         stage('Push Frontend Image') {
             steps {
-                sh "docker push ${FRONTEND_IMAGE}:latest"
+                bat "docker push %DOCKERHUB_USER%/devops-automation-frontend:latest"
             }
         }
     }
