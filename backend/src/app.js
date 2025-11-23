@@ -18,6 +18,9 @@ connectDB();
 // 🔹 Register your routes here
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/jenkins", require("./routes/jenkinsRoutes")); //jenkins
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok", message: "Backend is running" });
+});
 
 // 🔹 Test route
 app.get("/", (req, res) => {
