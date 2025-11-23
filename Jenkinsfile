@@ -57,20 +57,20 @@ pipeline {
 
         stage('Deploy to EC2') {
             steps {
-                withCredentials([sshUserPrivateKey(
-                    credentialsId: 'ec2-ssh-key',
-                    keyFileVariable: 'EC2_KEY',
-                    usernameVariable: 'EC2_USER'
-                )]) {
+                withCredentials([file(credentialsId: 'ec2-ssh-key', variable: 'SSH_KEY')]) {
+                    // Windows: fix key permissions and deploy via SSH
                     bat """
-                        echo Starting Deployment to EC2...
+                        echo Fixing key permissions...
+                        
+                        powershell -Command ^
+                        "Get-Acl %SSH_KEY% | Set-Acl -Path %SSH_KEY%; ^
+                         icacls %SSH_KEY% /inheritance:r; ^
+                         icacls %SSH_KEY% /grant:r $env:USERNAME:F"
 
-                        ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i "%EC2_KEY%" %EC2_USER%@3.110.49.133 "
-                            cd devops-automation-dashboard &&
-                            docker compose pull &&
-                            docker compose down &&
-                            docker compose up -d
-                        "
+                        echo Starting Deployment...
+
+                        ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i %SSH_KEY% ubuntu@3.110.49.133 ^
+                        "cd devops-automation-dashboard && docker compose pull && docker compose down && docker compose up -d"
                     """
                 }
             }
