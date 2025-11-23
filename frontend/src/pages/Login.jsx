@@ -33,7 +33,7 @@ function Login() {
       <div style={styles.card}>
         <div style={styles.header}>
           <div style={styles.logo}>🔐</div>
-          <h1 style={styles.title}>DevOps Dashboard</h1>
+          <h1 style={styles.title}>DevOps-Ketan Dashboard</h1>
           <p style={styles.subtitle}>Sign in to your account</p>
         </div>
 
