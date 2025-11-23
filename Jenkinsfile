@@ -51,10 +51,16 @@ pipeline {
 
         stage('Deploy to EC2') {
             steps {
-                sshagent(['ec2-ssh-key']) {
+                withCredentials([sshUserPrivateKey(
+                    credentialsId: 'ec2-ssh-key',
+                    keyFileVariable: 'EC2_KEY',
+                    usernameVariable: 'EC2_USER'
+                )]) {
                     bat """
-                        ssh -o StrictHostKeyChecking=no ubuntu@3.110.49.133 "
-                            cd ~/devops-automation-dashboard &&
+                        echo Starting Deployment to EC2...
+
+                        ssh -o StrictHostKeyChecking=no -i %EC2_KEY% %EC2_USER%@3.110.49.133 "
+                            cd devops-automation-dashboard &&
                             docker compose pull &&
                             docker compose down &&
                             docker compose up -d
