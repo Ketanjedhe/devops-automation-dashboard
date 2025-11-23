@@ -64,7 +64,8 @@ pipeline {
                 )]) {
                     bat """
                         echo Starting Deployment to EC2...
-                        ssh -o StrictHostKeyChecking=no -o StrictModes=no -i "%EC2_KEY%" %EC2_USER%@3.110.49.133 "
+
+                        ssh -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -i "%EC2_KEY%" %EC2_USER%@3.110.49.133 "
                             cd devops-automation-dashboard &&
                             docker compose pull &&
                             docker compose down &&
